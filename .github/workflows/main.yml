@@ -1,0 +1,18 @@
+name: Build IPA
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install scons
+      - name: Download Godot 4.4.1 editor
+        run: |
+          curl -L -o godot.zip https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_macos.universal.zip
+          unzip -q godot.zip
+      - name: Build IPA
+        run: GODOT="$PWD/Godot.app/Contents/MacOS/Godot" ios/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ipa
+          path: ios/build/TheChoicerVoicer-iOS.ipa
